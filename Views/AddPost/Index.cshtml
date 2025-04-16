@@ -1,0 +1,84 @@
+﻿@model BlogProjectMVC2.Models.Post
+
+@{
+    ViewData["Title"] = "Gönderi Paylaş";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-pen me-2"></i>
+                        Yeni Gönderi Paylaş
+                    </h4>
+                </div>
+                <div class="card-body">
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success">
+                            @TempData["SuccessMessage"]
+                        </div>
+                    }
+
+                    @if (!User.Identity.IsAuthenticated)
+                    {
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Gönderi paylaşabilmek için lütfen
+                            <a asp-controller="Login" asp-action="Index" class="alert-link">giriş yapın</a>
+                            veya
+                            <a asp-controller="Register" asp-action="Index" class="alert-link">kayıt olun</a>.
+                        </div>
+                    }
+                    else
+                    {
+                        <form asp-action="Index" method="post" enctype="multipart/form-data">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                            <div class="mb-3">
+                                <label asp-for="PostTitle" class="form-label">Başlık</label>
+                                <input asp-for="PostTitle" class="form-control" />
+                                <span asp-validation-for="PostTitle" class="text-danger"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="PostContent" class="form-label">İçerik</label>
+                                <textarea asp-for="PostContent" class="form-control" rows="10"></textarea>
+                                <span asp-validation-for="PostContent" class="text-danger"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="CategoryId" class="form-label">Kategori</label>
+                                <select asp-for="CategoryId" class="form-select" asp-items="ViewBag.Categories">
+                                    <option value="">Kategori Seçin</option>
+                                </select>
+                                <span asp-validation-for="CategoryId" class="text-danger"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Görsel</label>
+                                <input type="file" name="imageFile" class="form-control" accept="image/*" />
+                            </div>
+
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-paper-plane me-2"></i>
+                                    Gönderiyi Paylaş
+                                </button>
+                            </div>
+                        </form>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -1,0 +1,290 @@
+@model BlogProjectMVC2.Models.Users
+@{
+    ViewData["Title"] = "Profil";
+}
+
+<div class="container">
+    <div class="row">
+        <!-- Sol Sütun - Profil Bilgileri -->
+        <div class="col-md-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body text-center">
+                    @{
+                        var profileImageUrl = Model?.ProfileImageUrl ?? "~/image/defaultpp.png";
+                    }
+                    <img src="@Url.Content(profileImageUrl)" alt="Profil Fotoðrafý" class="rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;">
+                    <h4 class="card-title">@(Model?.Name ?? "") @(Model?.Surname ?? "")</h4>
+                    <p class="text-muted">@(Model?.UserName ?? "")</p>
+                    <p class="text-muted"><i class="fas fa-envelope me-2"></i>@(Model?.Email ?? "")</p>
+
+                    <div class="d-grid gap-2">
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editProfileModal">
+                            <i class="fas fa-edit me-2"></i>Profili Düzenle
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ýstatistikler -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Ýstatistikler</h5>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Gönderiler</span>
+                        <span class="badge bg-primary">@(Model?.Posts?.Count ?? 0)</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Beðeniler</span>
+                        <span class="badge bg-success">@(Model?.Likes?.Count ?? 0)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sað Sütun - Gönderiler ve Admin Paneli -->
+        <div class="col-md-8">
+            <!-- Admin Paneli -->
+            @if (ViewBag.IsAdmin == true)
+            {
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Admin Paneli</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="nav nav-tabs" id="adminTabs" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="users-tab" data-bs-toggle="tab" href="#users" role="tab">Kullanýcýlar</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="posts-tab" data-bs-toggle="tab" href="#posts" role="tab">Onay Bekleyen Gönderiler</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content mt-3" id="adminTabContent">
+                            <div class="tab-pane fade show active" id="users" role="tabpanel">
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Kullanýcý Adý</th>
+                                                <th>E-posta</th>
+                                                <th>Rol</th>
+                                                <th>Durum</th>
+                                                <th>Ýþlemler</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @if (ViewBag.AllUsers != null)
+
+                                            {
+                                                @foreach (var user in ViewBag.AllUsers)
+
+                                                {
+                                                    <tr>
+                                                        <td>@(user?.UserName ?? "")</td>
+                                                        <td>@(user?.Email ?? "")</td>
+                                                        <td>@(user?.Role.ToString() ?? "")</td>
+                                                        <td>
+                                                            @if (user?.IsApproved == true)
+
+                                                            {
+                                                                <span class="badge bg-success">Onaylý</span>
+                                                            }
+
+                                                            else
+
+                                                            {
+                                                                <span class="badge bg-warning">Onay Bekliyor</span>
+                                                            }
+                                                        </td>
+                                                        <td>
+                                                            @if (user?.IsApproved == false)
+
+                                                            {
+                                                                <form asp-action="ApproveUser" method="post" class="d-inline">
+                                                                    <input type="hidden" name="userId" value="@(user?.UserId)" />
+                                                                    <button type="submit" class="btn btn-success btn-sm">
+                                                                        <i class="fas fa-check"></i> Onayla
+                                                                    </button>
+                                                                </form>
+                                                            }
+                                                            <form asp-action="ToggleAdminRole" method="post" class="d-inline">
+                                                                <input type="hidden" name="userId" value="@(user?.UserId)" />
+                                                                <button type="submit" class="btn @(user?.Role == BlogProjectMVC2.Enum.RoleEnum.Admin ? "btn-danger" : "btn-warning") btn-sm"
+                                                                        onclick="return confirm('@(user?.Role == BlogProjectMVC2.Enum.RoleEnum.Admin ? "Admin yetkisini kaldýrmak" : "Admin yetkisi vermek") istediðinizden emin misiniz?')">
+                                                                    <i class="fas @(user?.Role == BlogProjectMVC2.Enum.RoleEnum.Admin ? "fa-user-minus" : "fa-user-shield")"></i>
+                                                                    @(user?.Role == BlogProjectMVC2.Enum.RoleEnum.Admin ? "Admin Yetkisini Kaldýr" : "Admin Yap")
+                                                                </button>
+                                                            </form>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="posts" role="tabpanel">
+                                <!-- Onay Bekleyen Gönderiler -->
+                                @if (ViewBag.PendingPosts != null && ViewBag.PendingPosts.Count > 0)
+
+                                {
+                                    <div class="mb-4">
+                                        <h6 class="text-primary">Onay Bekleyen Gönderiler</h6>
+                                        <div class="list-group">
+                                            @foreach (var post in ViewBag.PendingPosts)
+
+                                            {
+                                                <div class="list-group-item">
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <div>
+                                                            <h6 class="mb-1">@(post?.PostTitle ?? "")</h6>
+                                                            <small class="text-muted">@(post?.User?.UserName ?? "") tarafýndan</small>
+                                                        </div>
+                                                        <form asp-action="ApprovePost" method="post">
+                                                            <input type="hidden" name="postId" value="@(post?.PostId)" />
+                                                            <button type="submit" class="btn btn-sm btn-success">
+                                                                <i class="fas fa-check"></i> Onayla
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <!-- Gönderiler -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"><i class="fas fa-pen me-2"></i>Gönderilerim</h5>
+                        <a asp-action="MyPosts" class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-list me-1"></i>Tümünü Gör
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    @if (Model?.Posts?.Any() == true)
+
+                    {
+                        <div class="list-group">
+                            @foreach (var post in Model.Posts)
+
+                            {
+                                <div class="list-group-item">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">@(post?.PostTitle ?? "")</h6>
+                                            <small class="text-muted">@(post?.PublishDate.ToString("dd.MM.yyyy") ?? "")</small>
+                                            <div class="mt-2">
+                                                <form asp-action="LikePost" method="post" class="d-inline">
+                                                    <input type="hidden" name="postId" value="@(post?.PostId)" />
+                                                    <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
+                                                    <button type="submit" class="btn btn-sm @(post?.Likes?.Any(l => l.UserId == Model.UserId) == true ? "btn-danger" : "btn-outline-danger")">
+                                                        <i class="fas fa-heart"></i> @(post?.Likes?.Count ?? 0)
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                        <div class="btn-group">
+                                            <a href="@Url.Action("Index", "PostDetails", new { id = post?.PostId })" class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="@Url.Action("EditPost", "Profile", new { id = post?.PostId })" class="btn btn-sm btn-outline-warning">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <form asp-action="DeletePost" method="post" class="d-inline" onsubmit="return confirm('Bu gönderiyi silmek istediðinizden emin misiniz?');">
+                                                <input type="hidden" name="postId" value="@(post?.PostId)" />
+                                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+
+                    else
+
+                    {
+                        <p class="text-muted text-center">Henüz gönderiniz bulunmuyor.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Profil Düzenleme Modal -->
+<div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editProfileModalLabel">Profili Düzenle</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Profil Bilgileri</h5>
+                    <form asp-action="Edit" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <input type="hidden" asp-for="UserId" />
+
+                        <div class="form-group">
+                            <label asp-for="Name" class="control-label"></label>
+                            <input asp-for="Name" class="form-control" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Surname" class="control-label"></label>
+                            <input asp-for="Surname" class="form-control" />
+                            <span asp-validation-for="Surname" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="UserName" class="control-label"></label>
+                            <input asp-for="UserName" class="form-control" />
+                            <span asp-validation-for="UserName" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Email" class="control-label"></label>
+                            <input asp-for="Email" class="form-control" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mt-3">
+                            <input type="submit" value="Kaydet" class="btn btn-primary" />
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        function previewImage(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    var preview = input.closest('.position-relative').querySelector('img');
+                    preview.src = e.target.result;
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
+}

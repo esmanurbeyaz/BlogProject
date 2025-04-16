@@ -1,0 +1,220 @@
+﻿@using System.Security.Claims
+@model BlogProjectMVC2.Models.Post
+
+@{
+    ViewData["Title"] = Model?.PostTitle ?? "Yazı Detayı";
+}
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8">
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="fas fa-check-circle me-2"></i>
+                    @TempData["Success"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    @TempData["Error"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            @if (Model != null)
+            {
+                <article class="blog-post bg-white p-4 rounded shadow-sm">
+                    <h1 class="mb-4">@Model.PostTitle</h1>
+
+                    <div class="post-meta mb-4">
+                        <span class="text-muted me-3">
+                            <i class="fas fa-calendar-alt me-1"></i>
+                            @Model.PublishDate.ToString("dd MMMM yyyy")
+                        </span>
+                        <span class="text-muted me-3">
+                            <i class="fas fa-user me-1"></i>
+                            @Model.User?.UserName
+                        </span>
+                        <span class="text-muted">
+                            <i class="fas fa-folder me-1"></i>
+                            @Model.category?.CategoryName
+                        </span>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.PostImageUrl))
+                    {
+                        <img src="@Model.PostImageUrl" class="img-fluid rounded mb-4" alt="@Model.PostTitle">
+                    }
+
+                    <div class="post-content">
+                        @Html.Raw(Model.PostContent)
+                    </div>
+
+                    <hr class="my-5">
+
+                    <div class="comments-section">
+                        <h3 class="mb-4">
+                            <i class="fas fa-comments me-2"></i>
+                            Yorumlar (@(Model.comments?.Count ?? 0))
+                        </h3>
+
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <div class="card mb-4">
+                                <div class="card-body">
+                                    <h5 class="card-title mb-3">Yorum Yap</h5>
+                                    <form asp-controller="PostDetails" asp-action="AddComment" method="post">
+                                        <input type="hidden" name="PostId" value="@Model.PostId" />
+                                        <div class="mb-3">
+                                            <textarea name="CommentContent" class="form-control" rows="3" required
+                                                      placeholder="Yorumunuzu buraya yazın..."></textarea>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-paper-plane me-1"></i>
+                                            Yorumu Gönder
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="alert alert-info mb-4">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Yorum yapabilmek için lütfen
+                                <a asp-controller="Login" asp-action="Index" class="alert-link">giriş yapın</a>
+                                veya
+                                <a asp-controller="Register" asp-action="Index" class="alert-link">kayıt olun</a>.
+                            </div>
+                        }
+
+                        @if (Model.comments != null && Model.comments.Any())
+                        {
+                            foreach (var comment in Model.comments.OrderByDescending(c => c.CommentPublishDate))
+                            {
+                                <div class="comment bg-light p-3 rounded mb-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <div>
+                                            <strong>@comment.User?.UserName</strong>
+                                        </div>
+                                        <div class="d-flex align-items-center">
+                                            <small class="text-muted me-2">
+                                                <i class="fas fa-clock me-1"></i>
+                                                @comment.CommentPublishDate.ToString("dd MMMM yyyy")
+                                            </small>
+                                            @if (User.Identity.IsAuthenticated && (comment.UserId.ToString() == User.FindFirstValue(ClaimTypes.NameIdentifier) || Model.UserId.ToString() == User.FindFirstValue(ClaimTypes.NameIdentifier)))
+                                            {
+                                                <form asp-action="DeleteComment" method="post" class="ms-2">
+                                                    <input type="hidden" name="commentId" value="@comment.CommentId" />
+                                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Bu yorumu silmek istediğinizden emin misiniz?')">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </form>
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="comment-content">
+                                        @comment.CommentContent
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Henüz yorum yapılmamış. İlk yorumu siz yapın!
+                            </div>
+                        }
+                    </div>
+                </article>
+            }
+            else
+            {
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    Yazı bulunamadı.
+                </div>
+            }
+        </div>
+
+        <div class="col-md-4">
+            @if (Model != null && Model.User != null)
+            {
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-user me-2"></i>
+                            Yazar Hakkında
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <h6>@Model.User.UserName</h6>
+                        <p class="text-muted mb-0">
+                            <i class="fas fa-pencil-alt me-1"></i>
+                            Toplam Yazı: @(Model.User.Posts?.Count ?? 0)
+                        </p>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .post-content {
+            line-height: 1.8;
+            font-size: 1.1rem;
+        }
+
+        .comment {
+            transition: transform 0.2s;
+        }
+
+            .comment:hover {
+                transform: translateX(5px);
+            }
+
+        .post-meta span {
+            font-size: 0.9rem;
+        }
+
+        .card {
+            transition: transform 0.2s;
+        }
+
+            .card:hover {
+                transform: translateY(-5px);
+            }
+
+        .alert-link {
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+            .alert-link:hover {
+                text-decoration: underline;
+            }
+
+        .alert {
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,.1);
+        }
+
+        .alert-success {
+            background-color: #d1e7dd;
+            color: #0f5132;
+        }
+
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #842029;
+        }
+    </style>
+}

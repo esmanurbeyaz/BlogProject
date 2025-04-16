@@ -1,0 +1,61 @@
+﻿.post-container {
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+    font-family: 'Segoe UI', sans-serif;
+    background: #f9f9f9;
+    border-radius: 8px;
+}
+
+h1 {
+    color: #333;
+    font-size: 28px;
+}
+
+.meta {
+    font-size: 14px;
+    color: #777;
+    margin-bottom: 15px;
+}
+
+.main-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 6px;
+    margin-bottom: 15px;
+}
+
+.post-content {
+    font-size: 18px;
+    color: #444;
+    line-height: 1.6;
+}
+
+.post-stats {
+    margin-top: 20px;
+    font-size: 16px;
+    color: #555;
+}
+
+.comments-section {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #ccc;
+}
+
+    .comments-section h3 {
+        margin-bottom: 10px;
+    }
+
+    .comments-section ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    .comments-section li {
+        margin-bottom: 10px;
+        background: #fff;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+    }

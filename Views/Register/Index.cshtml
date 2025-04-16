@@ -1,0 +1,75 @@
+﻿@model BlogProjectMVC2.Models.Users
+
+@{
+    Layout = "~/Views/Shared/_introLayout.cshtml";
+    ViewData["Title"] = "Kayıt Ol";
+}
+@section Styles {
+    <link rel="stylesheet" href="~/css/register.css" />
+}
+
+<div class="register-container">
+    <div class="register-card">
+        <h3 class="text-center mb-4">Kayıt Ol</h3>
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success">
+                @TempData["SuccessMessage"]
+            </div>
+        }
+
+        <form asp-action="Index" method="post" asp-antiforgery="true">
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label">Ad</label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Surname" class="form-label">Soyad</label>
+                <input asp-for="Surname" class="form-control" />
+                <span asp-validation-for="Surname" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="UserName" class="form-label">Kullanıcı Adı</label>
+                <input asp-for="UserName" class="form-control" />
+                <span asp-validation-for="UserName" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label">Email</label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Password" class="form-label">Şifre</label>
+                <input asp-for="Password" type="password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+                <div class="form-text">
+                    Şifreniz aşağıdaki gereksinimleri karşılamalıdır:
+                    <ul class="mb-0">
+                        <li>En az 6 karakter uzunluğunda</li>
+                        <li>En az 1 büyük harf</li>
+                        <li>En az 1 küçük harf</li>
+                        <li>En az 1 rakam</li>
+                        <li>En az 1 özel karakter (!#$%^&* vb.)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="d-grid">
+                <button type="submit" class="btn btn-primary">Kayıt Ol</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/jquery-3.6.0.min.js"></script>
+    <script src="~/js/jquery.validate.min.js"></script>
+    <script src="~/js/jquery.validate.unobtrusive.min.js"></script>
+    <partial name="_ValidationScriptsPartial" />
+}

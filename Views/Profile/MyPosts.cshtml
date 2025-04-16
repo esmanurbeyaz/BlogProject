@@ -1,0 +1,66 @@
+﻿@using System.Security.Claims
+@model IEnumerable<BlogProjectMVC2.Models.Post>
+@{
+    ViewData["Title"] = "Gönderilerim";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"><i class="fas fa-pen me-2"></i>Gönderilerim</h5>
+                        <a asp-action="Index" class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-arrow-left me-1"></i>Profile Dön
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    @if (Model.Any())
+                    {
+                        <div class="list-group">
+                            @foreach (var post in Model)
+                            {
+                                <div class="list-group-item">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">@post.PostTitle</h6>
+                                            <small class="text-muted">@post.PublishDate.ToString("dd.MM.yyyy")</small>
+                                            <div class="mt-2">
+                                                <form asp-action="LikePost" method="post" class="d-inline">
+                                                    <input type="hidden" name="postId" value="@post.PostId" />
+                                                    <button type="submit" class="btn btn-sm @(post.Likes.Any(l => l.UserId == int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier))) ? "btn-danger" : "btn-outline-danger")">
+                                                        <i class="fas fa-heart"></i> @post.Likes.Count
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                        <div class="btn-group">
+                                            <a href="@Url.Action("Index", "PostDetails", new { id = post.PostId })" class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="@Url.Action("EditPost", "Profile", new { id = post.PostId })" class="btn btn-sm btn-outline-warning">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <form asp-action="DeletePost" method="post" class="d-inline" onsubmit="return confirm('Bu gönderiyi silmek istediğinizden emin misiniz?');">
+                                                <input type="hidden" name="postId" value="@post.PostId" />
+                                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted text-center">Henüz gönderiniz bulunmuyor.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

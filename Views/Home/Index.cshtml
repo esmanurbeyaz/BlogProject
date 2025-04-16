@@ -1,0 +1,135 @@
+﻿@model IEnumerable<BlogProjectMVC2.Models.Post>
+
+@{
+    ViewData["Title"] = ViewBag.CategoryName != null ? $"{ViewBag.CategoryName} Kategorisi" : "Ana Sayfa";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8">
+            <h2 class="mb-4">
+                @if (ViewBag.CategoryName != null)
+                {
+                    <span>@ViewBag.CategoryName Kategorisindeki Yazılar</span>
+                }
+                else
+                {
+                    <span>Son Yazılar</span>
+                }
+            </h2>
+            @if (!Model.Any())
+            {
+                <div class="alert alert-info">
+                    Bu kategoride henüz yazı bulunmuyor.
+                </div>
+            }
+            else
+            {
+                <div class="row">
+                    @foreach (var post in Model)
+                    {
+                        <div class="col-md-6 mb-4">
+                            <div class="card h-100">
+                                @if (!string.IsNullOrEmpty(post.PostImageUrl))
+                                {
+                                    <img src="@post.PostImageUrl" class="card-img-top" alt="@post.PostTitle" style="height: 200px; object-fit: cover;">
+                                }
+                                <div class="card-body">
+                                    <h5 class="card-title">@post.PostTitle</h5>
+                                    <p class="card-text">@post.PostContent.Substring(0, Math.Min(100, post.PostContent.Length))...</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-muted">
+                                            <i class="fas fa-user me-1"></i>@post.User?.UserName
+                                            <i class="fas fa-calendar ms-2 me-1"></i>@post.PublishDate.ToString("dd.MM.yyyy")
+                                        </small>
+                                        @if (ViewBag.IsAuthenticated)
+                                        {
+                                            <form asp-controller="Profile" asp-action="LikePost" method="post" class="d-inline">
+                                                <input type="hidden" name="postId" value="@post.PostId" />
+                                                <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
+                                                <button type="submit" class="btn btn-sm @(post.Likes?.Any(l => l.UserId == ViewBag.CurrentUserId) == true ? "btn-danger" : "btn-outline-danger")">
+                                                    <i class="fas fa-heart"></i> @(post.Likes?.Count ?? 0)
+                                                </button>
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            <button type="button" class="btn btn-sm btn-outline-danger" disabled>
+                                                <i class="fas fa-heart"></i> @(post.Likes?.Count ?? 0)
+                                            </button>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="card-footer bg-white">
+                                    <a href="@Url.Action("Index", "PostDetails", new { id = post.PostId })" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-eye me-1"></i>Devamını Oku
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Kategoriler</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group">
+                        @foreach (var category in ViewBag.Categories)
+                        {
+                            <a href="@Url.Action("CategoryPosts", "Home", new { id = category.CategoryId })"
+                               class="list-group-item list-group-item-action d-flex justify-content-between align-items-center @(ViewBag.CategoryName == category.CategoryName ? "active" : "")">
+                                @category.CategoryName
+                                <span class="badge bg-primary rounded-pill">@category.Posts.Count</span>
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mt-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Popüler Yazılar</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group">
+                        @foreach (var post in ViewBag.PopularPosts)
+                        {
+                            <a href="@Url.Action("Index", "PostDetails", new { id = post.PostId })" class="list-group-item list-group-item-action">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1">@post.PostTitle</h6>
+                                    <small class="text-muted">@(post.comments?.Count ?? 0) yorum</small>
+                                </div>
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .card {
+            transition: transform 0.2s;
+        }
+
+            .card:hover {
+                transform: translateY(-5px);
+            }
+
+        .list-group-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .list-group-item.active {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+        }
+    </style>
+}

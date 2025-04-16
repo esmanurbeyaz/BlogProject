@@ -1,0 +1,58 @@
+@model BlogProjectMVC2.Models.LoginViewModel
+
+@{
+    Layout = "~/Views/Shared/_introLayout.cshtml";
+    ViewData["Title"] = "Giriş Yap";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/register.css" />
+}
+
+<div class="register-container">
+    <div class="register-card">
+        <h3 class="text-center mb-4">Giriş Yap</h3>
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success">
+                @TempData["SuccessMessage"]
+            </div>
+        }
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger">
+                @TempData["ErrorMessage"]
+            </div>
+        }
+
+        <form asp-action="Index" method="post" asp-antiforgery="true">
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label">Email</label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Password" class="form-label">Şifre</label>
+                <input asp-for="Password" type="password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+
+            <div class="d-grid mb-3">
+                <button type="submit" class="btn btn-primary">Giriş Yap</button>
+            </div>
+
+            <div class="text-center">
+                <p>Hesabınız yok mu? <a asp-controller="Register" asp-action="Index">Kayıt Ol</a></p>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+} 

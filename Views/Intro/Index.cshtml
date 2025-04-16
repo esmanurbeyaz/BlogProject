@@ -1,0 +1,24 @@
+﻿@{
+    Layout = "~/Views/Shared/_introLayout.cshtml";
+    ViewData["Title"] = "Hoşgeldiniz";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/intro.css" />
+}
+
+<div class="intro-container">
+    <div class="intro-box">
+        <img src="~/image/logo.png" alt="Bi Dünya Logo" class="intro-logo" />
+        <h1 class="mb-3">Bi Dünya</h1>
+        <p class="text-muted mb-4">Hayatın içinden yazılar, fikirler ve paylaşımlar.</p>
+
+        <div class="intro-buttons d-flex flex-column align-items-center">
+            <a href="/Login/Index" class="btn btn-primary btn-lg">Giriş Yap</a>
+            <a href="/Register/Index" class="btn btn-outline-primary btn-lg">Kayıt Ol</a>
+            <a href="/Home/Index" class="btn btn-secondary btn-lg">Misafir Olarak Devam Et</a>
+        </div>
+    </div>
+</div>
+
+

@@ -1,0 +1,53 @@
+﻿body {
+    background-image: url('../image/backgraund.png'); /* Doğru yolu kullandığından emin ol */
+    background-size: cover;
+    background-position: center;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+/*.register-container {
+    background: linear-gradient(to bottom right, #dff6ff, #b8eaff);
+    padding: 30px;
+    border-radius: 15px;
+    max-width: 400px;
+    margin: auto;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}*/
+
+input.form-control {
+    margin-bottom: 15px;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+button.btn-primary {
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    border: none;
+    color: white;
+    border-radius: 8px;
+}
+
+.register-container {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.register-card {
+    width: 100%;
+    max-width: 400px;
+    padding: 30px;
+    background-color: rgba(255, 255, 255, 0.2);  Şeffaflık artırıldı 
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);  Arka planı hafif bulanıklaştırmak için 
+    -webkit-backdrop-filter: blur(10px);  Safari için destek 
+}
+
+

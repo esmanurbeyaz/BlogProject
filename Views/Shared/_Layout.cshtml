@@ -1,0 +1,287 @@
+﻿<!DOCTYPE html>
+
+<html lang="tr">
+
+<head>
+
+    <meta charset="utf-8" />
+
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>@ViewData["Title"] - Bi Dünya</title>
+
+
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+
+    @RenderSection("Styles", required: false)
+
+    <style>
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #fdfdfd;
+            margin: 0;
+            padding: 0;
+        }
+
+
+
+        header nav {
+            background-image: url('/image/backgraund.png') !important;
+            background-size: cover !important;
+            background-position: center !important;
+        }
+
+
+
+        footer {
+            background-image: url('/image/backgraund.png') !important;
+            background-size: cover !important;
+            background-position: center !important;
+            background-repeat: no-repeat !important;
+        }
+
+
+
+        .navbar-nav .nav-link {
+            font-weight: 500;
+            color: #444 !important;
+            transition: color 0.3s ease;
+        }
+
+
+
+            .navbar-nav .nav-link:hover {
+                color: #0d6efd !important;
+            }
+
+
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+        }
+
+
+
+            .navbar-brand img {
+                margin-right: 10px;
+            }
+
+
+
+        .user-menu .dropdown-toggle::after {
+            display: none;
+        }
+
+
+
+        .user-menu .dropdown-menu {
+            right: 0;
+            left: auto;
+            min-width: 200px;
+        }
+
+
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <header>
+
+        <nav class="navbar navbar-expand-lg navbar-light shadow-sm px-4">
+
+            <div class="container-fluid d-flex justify-content-between align-items-center">
+
+                <!-- Logo -->
+
+                <a class="navbar-brand d-flex align-items-center" asp-controller="Home" asp-action="Index">
+
+                    <img src="~/image/logo.png" alt="logo" width="60" height="60" class="me-2" />
+
+                    <span class="fw-bold fs-4 text-dark mb-0">Bi Dünya</span>
+
+                </a>
+
+
+
+                <!-- Orta Menü -->
+
+                <div class="d-flex justify-content-center flex-grow-1">
+
+                    <ul class="navbar-nav flex-row gap-4">
+
+                        <li class="nav-item">
+
+                            <a class="nav-link fw-semibold" asp-controller="Home" asp-action="Index">
+
+                                <i class="fas fa-home me-1"></i>
+
+                                Anasayfa
+
+                            </a>
+
+                        </li>
+
+                        @if (User.Identity.IsAuthenticated)
+
+                        {
+
+                            <li class="nav-item">
+
+                                <a class="nav-link fw-semibold" asp-controller="AddPost" asp-action="Index">
+
+                                    <i class="fas fa-pen me-1"></i>
+
+                                    Gönderi Paylaş
+
+                                </a>
+
+                            </li>
+
+                        }
+
+                    </ul>
+
+                </div>
+
+
+
+                <!-- Sağ Menü -->
+
+                <div class="d-flex align-items-center">
+
+                    @if (User.Identity.IsAuthenticated)
+
+                    {
+
+                        <div class="dropdown user-menu">
+
+                            <button class="btn nav-link dropdown-toggle d-flex align-items-center" type="button" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
+
+                                <img src="~/image/defaultpp.png" alt="avatar" class="user-avatar" />
+
+                                <span class="d-none d-md-inline">@User.Identity.Name</span>
+
+                                <i class="fas fa-chevron-down ms-2"></i>
+
+                            </button>
+
+                            <ul class="dropdown-menu shadow" aria-labelledby="userMenu">
+
+                                <li>
+
+                                    <a class="dropdown-item" asp-controller="Profile" asp-action="Index">
+
+                                        <i class="fas fa-cog me-2"></i>
+
+                                        Hesap Ayarları
+
+                                    </a>
+
+                                </li>
+
+                                <li><hr class="dropdown-divider"></li>
+
+                                <li>
+
+                                    <a class="dropdown-item text-danger" asp-controller="Login" asp-action="Logout">
+
+                                        <i class="fas fa-sign-out-alt me-2"></i>
+
+                                        Çıkış Yap
+
+                                    </a>
+
+                                </li>
+
+                            </ul>
+
+                        </div>
+
+                    }
+
+                    else
+
+                    {
+
+                        <a class="btn btn-outline-primary me-2" asp-controller="Login" asp-action="Index">
+
+                            <i class="fas fa-sign-in-alt me-1"></i>
+
+                            Giriş Yap
+
+                        </a>
+
+                        <a class="btn btn-primary" asp-controller="Register" asp-action="Index">
+
+                            <i class="fas fa-user-plus me-1"></i>
+
+                            Kayıt Ol
+
+                        </a>
+
+                    }
+
+                </div>
+
+            </div>
+
+        </nav>
+
+    </header>
+
+
+
+    <div class="container mt-4">
+
+        @RenderBody()
+
+    </div>
+
+
+
+    <footer class="footer mt-auto py-3 text-center border-top">
+
+        <div class="container">
+
+            <span class="text-muted">&copy; 2025 - Bi Dünya Blog</span>
+
+        </div>
+
+    </footer>
+
+
+
+    <script src="~/js/jquery-3.6.0.min.js"></script>
+
+    <script src="~/js/jquery.validate.min.js"></script>
+
+    <script src="~/js/jquery.validate.unobtrusive.min.js"></script>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+
+
+    @RenderSection("Scripts", required: false)
+
+</body>
+
+</html>
